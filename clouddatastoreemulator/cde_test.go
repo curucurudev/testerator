@@ -15,11 +15,16 @@ type Sample struct {
 }
 
 func TestNew(t *testing.T) {
+	t.Log("111")
 	ctx := context.Background()
+	t.Log("222")
 	dsCli, stop, err := clouddatastoreemulator.New(ctx, nil)
+	t.Log("333")
 	if err != nil {
+		t.Log("444")
 		t.Fatal(err)
 	}
+	t.Log("555")
 	defer stop()
 	if dsCli == nil {
 		t.Fatal("dsCli is nil")

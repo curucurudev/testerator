@@ -4,20 +4,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
 	"cloud.google.com/go/datastore"
 	"github.com/ory/dockertest/v3"
-	"google.golang.org/api/option"
+	// "google.golang.org/api/option"
 )
 
 // Config provides some setting values.
 type Config struct {
 	DockerEndpoint string
 	ProjectID      string
-	Options        []option.ClientOption
-	Tag            string
+	// Options        []option.ClientOption
+	Tag string
 }
 
 // New Cloud Datastore Emulator spawned or detect and setup.
@@ -95,31 +96,47 @@ func New(ctx context.Context, cfg *Config) (*datastore.Client, func(), error) {
 		}
 
 		dsCli, err = checkEmulatorInstance(ctx, cfg)
+		log.Printf("mmm")
 		return err
 	})
+	log.Printf("nnn")
 	if err != nil {
+		log.Printf("ooo")
 		return nil, nil, err
 	}
 
+	log.Printf("ppp")
 	return dsCli, func() { _ = pool.Purge(resource) }, nil
 }
 
 func checkEmulatorInstance(ctx context.Context, cfg *Config) (*datastore.Client, error) {
+	log.Printf("aaa")
 	if os.Getenv("DATASTORE_EMULATOR_HOST") == "" {
+		log.Printf("bbb")
 		return nil, errors.New("not found datastore emulator")
 	}
 
-	dsCli, err := datastore.NewClient(ctx, cfg.ProjectID, cfg.Options...)
+	log.Printf("ccc")
+	dsCli, err := datastore.NewClient(ctx, cfg.ProjectID)
+	log.Printf("ddd")
 	if err != nil {
+		log.Printf("eee")
 		return nil, err
 	}
+	log.Printf("fff")
 	q := datastore.NewQuery("__namespace__").KeysOnly().Limit(1)
+	log.Printf("ggg")
 	ctx, cancel := context.WithTimeout(ctx, 1000*time.Millisecond)
+	log.Printf("hhh")
 	defer cancel()
+	log.Printf("iii")
 	_, err = dsCli.GetAll(ctx, q, nil)
+	log.Printf("jjj")
 	if err != nil {
+		log.Printf("kkk")
 		return nil, err
 	}
+	log.Printf("lll")
 
 	return dsCli, nil
 }
